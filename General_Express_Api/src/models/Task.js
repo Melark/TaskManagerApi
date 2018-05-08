@@ -12,5 +12,5 @@ const taskSchema = new Schema({
         type: Date
     }
 });
- 
-module.exports = mongoose.model('tasks',taskSchema);
+
+module.exports = mongoose.model('tasks', taskSchema);

@@ -1,5 +1,4 @@
 const passport = require('passport');
-const LinkedInStrategy = require('passport-linkedin');
 
 const User = require('../models/User');
 const init = require('./init');

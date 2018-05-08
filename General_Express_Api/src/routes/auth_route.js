@@ -39,24 +39,26 @@ module.exports = function (router) {
             res.json(req.user);
         });
 
-        router.post('/auth/local/register', (req, res) => {
-            User.register(new Account({ username : req.body.username }), req.body.password, function(err, account) {
-                if (err) {
-                    return res.send(err);
-                }
-        
-                passport.authenticate('local')(req, res, function () {
-                    res.redirect('/');
-                });
+    router.post('/auth/local/register', (req, res) => {
+        User.register(new Account({
+            username: req.body.username
+        }), req.body.password, function (err, account) {
+            if (err) {
+                return res.status(500).send(err);
+            }
+
+            passport.authenticate('local')(req, res, function () {
+                res.redirect('/');
             });
         });
+    });
 
-        router.post('/auth/local/login', passport.authenticate('local'), function(req, res) {
-            res.redirect('/');
-        });
+    router.post('/auth/local/login', passport.authenticate('local'), function (req, res) {
+        res.redirect('/');
+    });
 
-        router.get('/logout', function(req, res) {
-            req.logout();
-            res.redirect('/');
-        }); 
+    router.get('/logout', function (req, res) {
+        req.logout();
+        res.redirect('/');
+    });
 };

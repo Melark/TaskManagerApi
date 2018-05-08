@@ -1,25 +1,22 @@
 const express = require('express');
 const mongoose = require('mongoose');
+require('../models/Task');
+const Task = mongoose.model('tasks');
 
 module.exports = function (router) {
-    require('../models/Task');
-    const Task = mongoose.model('tasks');
-
     router.get('/tasks', (req, res) => {
         Task.find({}).then(tasks => {
-            res.send(tasks);
+            res.status(200).send(tasks);
         }).catch(err => {
-            res.send(err);
-        })
+            res.status(500).send(err);
+        });
     });
 
     router.get('/task/:id', (req, res) => {
-        Task.findById(req.params.id, (err, task) => {
-            if (err) {
-                console.log(err);
-                return;
-            }
-            res.send(task);
+        Task.findById(req.params.id).then(task => {
+            res.status(200).send(task);
+        }).catch(err => {
+            res.status(500).send(err);
         });
     });
 
@@ -30,42 +27,37 @@ module.exports = function (router) {
             date: req.body.date
         });
 
-        newTask.save().then(user => {
-            res.send(user);
-        }).catch(err =>{
-            console.log(err);
-            res.send({});
+        newTask.save().then(task => {
+            res.status(200).send(task);
+        }).catch(err => {
+            res.status(500).send(err);
         });
     });
 
     router.put('/task/:id', (req, res) => {
         Task.findOne({
             _id: req.params.id
-          }).then(task => {
-              task.title = req.body.title;
-              task.summary = req.body.summary;
-              task.date = req.body.date;
+        }).then(task => {
+            task.title = req.body.title;
+            task.summary = req.body.summary;
+            task.date = req.body.date;
 
-              task.save().then(taskResult =>{
-                  res.send(true);
-              });
-          }).catch(err => {
-            console.log(err);
-            res.send(false);
-        });
-
-        newTask.save().then(user => {
-            res.send(user);
-        }).catch(err =>{
-            console.log(err);
-            res.send({});
+            task.save().then(taskResult => {
+                res.status(200).send(task);
+            });
+        }).catch(err => {
+            res.status(500).send(err);
         });
     });
 
-router.delete('/:id', (req, res) => {
-    Task.remove({_id: req.params.id})
-      .then(() => {
-        res.send(true);
-      });
-  });
+    router.delete('/:id', (req, res) => {
+        Task.remove({
+                _id: req.params.id
+            })
+            .then(() => {
+                res.status(200).send(true);
+            }).catch(err => {
+                res.status(500).send(err);
+            });
+    });
 }
